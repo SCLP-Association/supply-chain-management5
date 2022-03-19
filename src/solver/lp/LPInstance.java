@@ -1,5 +1,6 @@
 package solver.lp;
 
+import ilog.cplex;
 import ilog.cplex.*;
 import ilog.concert.*;
 import java.util.ArrayList;
