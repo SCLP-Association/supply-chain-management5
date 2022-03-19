@@ -2,6 +2,7 @@ package solver.lp;
 
 import ilog.cplex.*;
 import ilog.concert.*;
+import java.util.ArrayList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,45 +29,6 @@ public class LPInstance
   // Linear Programming (LP) Objective value
   double objectiveValue;
   
-  public void solve() throws IloException
-  {
-    try
-    {
-      cplex = new IloCplex();
-    
-       // Diet Problem from Lecture Notes
-      IloNumVar[] vars = cplex.numVarArray(2, 0, 1000, IloNumVarType.Float);
-
-      IloNumExpr carbs = cplex.numExpr();
-      carbs = cplex.sum(carbs, cplex.prod(100, vars[0]));
-      carbs = cplex.sum(carbs, cplex.prod(250, vars[1]));
-  
-      cplex.addGe(carbs, 500);
-      cplex.addGe(cplex.scalProd(new int[]{100, 50}, vars), 250);	// Fat
-      cplex.addGe(cplex.scalProd(new int[]{150, 200}, vars), 600);	// Protein
-
-      // Objective function 
-      cplex.addMinimize(cplex.scalProd(new int[]{25, 15}, vars));
-
-      if(cplex.solve())
-      {
-        objectiveValue = Math.ceil(cplex.getObjValue());
-		
-        System.out.println("Meat:  " + cplex.getValue(vars[0]));
-        System.out.println("Bread:  " + cplex.getValue(vars[1]));
-        System.out.println("Objective value: " + cplex.getObjValue());
-      }
-      else
-      {
-        System.out.println("No Solution found!");
-      }
-    }
-    catch(IloException e)
-    {
-      System.out.println("Error " + e);
-    }
-  }
-
   public LPInstance(String fileName)
   {
     Scanner read = null;
@@ -118,6 +80,65 @@ public class LPInstance
     for (int i = 0; i < numCustomers; i++)
       for (int j = 0; j < numFacilities; j++)
         distanceCF[i][j] = read.nextDouble();
+  }
+
+  public void solve() throws IloException
+  {
+    try
+    {
+      cplex = new IloCplex();
+
+      // decision variables
+      IloNumVar[][][] fvc = new IloNumVar[this.numFacilities][this.numMaxVehiclePerFacility][this.numCustomers];
+      IloNumVar[] factoryOpen = new IloNumVar[this.numFacilities];
+      IloNumVar[][] factoryVehicles = new IloNumVar[this.numFacilities][this.numMaxVehiclePerFacility];
+
+      for (int i = 0; i < this.numFacilities; i ++) {
+        for (int j = 0; j < this.numMaxVehiclePerFacility; j ++) {
+          for (int k = 0; k < this.numCustomers; k ++) {
+            fvc[i][j][k] = new IloNumVar(0, 1, IloNumVarType.Float);
+          }
+          factoryVehicles[i][j] = new IloNumVar(0, 1, IloNumVarType.Float);
+        }
+        factoryOpen[i] = new IloNumVar(0, 1, IloNumVarType.Float);
+      }
+
+
+    
+
+
+      // // Diet Problem from Lecture Notes
+      // IloNumVar[] vars = cplex.numVarArray(2, 0, 1000, IloNumVarType.Float);
+
+      // IloNumExpr carbs = cplex.numExpr();
+      // carbs = cplex.sum(carbs, cplex.prod(100, vars[0]));
+      // carbs = cplex.sum(carbs, cplex.prod(250, vars[1]));
+  
+      // cplex.addGe(carbs, 500);
+      // cplex.addGe(cplex.scalProd(new int[]{100, 50}, vars), 250);	// Fat
+      // cplex.addGe(cplex.scalProd(new int[]{150, 200}, vars), 600);	// Protein
+
+      // // Objective function 
+      // cplex.addMinimize(cplex.scalProd(new int[]{25, 15}, vars));
+
+      if(cplex.solve())
+      {
+        objectiveValue = Math.ceil(cplex.getObjValue());
+		
+        System.out.println("Meat:  " + cplex.getValue(vars[0]));
+        System.out.println("Bread:  " + cplex.getValue(vars[1]));
+        System.out.println("Objective value: " + cplex.getObjValue());
+      }
+      else
+      {
+        System.out.println("No Solution found!");
+      }
     }
+    catch(IloException e)
+    {
+      System.out.println("Error " + e);
+    }
+  }
+
 
 }
