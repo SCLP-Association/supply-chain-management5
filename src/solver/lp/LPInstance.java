@@ -103,42 +103,40 @@ public class LPInstance
         factoryOpen[i] = cplex.numVar(0, 1, IloNumVarType.Float);
       }
 
-
       //demand fulfilled by a factory should be less than its capacity
-      for (int i = 0; i < this.numFacilities; i ++) {
-        IloNumExpr sumExpression = cplex.numExpr();
-        for (int j = 0; j < this.numMaxVehiclePerFacility; j++){
-          for (int k = 0; k < this.numCustomers; k++){
-            sumExpression = cplex.sum(sumExpression, cplex.prod(fvc[i][j][k], demandC[k]));
+      for (int f = 0; f < this.numFacilities; f++) {
+        IloNumExpr sumExpression1 = cplex.numExpr();
+        for (int v = 0; v < this.numMaxVehiclePerFacility; v++){
+          for (int c = 0; c < this.numCustomers; c++){
+            sumExpression1 = cplex.sum(sumExpression1, cplex.prod(fvc[f][v][c], demandC[c]));
           }
         }
-        cplex.addLe(sumExpression, this.capacityF[i]);
+        cplex.addLe(sumExpression1, this.capacityF[f]);
       }
 
 
       //every customer served by at least one facility
       for (int c = 0; c < this.numCustomers; c++) {
-        IloNumExpr sumExpression = cplex.numExpr();
-        for (int j = 0; j < this.numFacilities; j++){
-          for (int k = 0; k < this.numMaxVehiclePerFacility; k++){
-            sumExpression = cplex.sum(sumExpression, fvc[j][k][c]);
+        IloNumExpr sumExpression2 = cplex.numExpr();
+        for (int f = 0; f < this.numFacilities; f++){
+          for (int v = 0; v < this.numMaxVehiclePerFacility; v++){
+            sumExpression2 = cplex.sum(sumExpression2, fvc[f][v][c]);
           }
         }
-        cplex.addGe(sumExpression, 1.0);
+        cplex.addGe(sumExpression2, 1.0);
       }
 
 
       //vehicles don't drive too much
       for (int v = 0; v < this.numMaxVehiclePerFacility; v++) {
-        IloNumExpr sumExpression = cplex.numExpr();
+        IloNumExpr sumExpression3 = cplex.numExpr();
         for (int f = 0; f < this.numFacilities; f++) {
           for (int c = 0; c < this.numCustomers; c++) {
-            sumExpression = cplex.sum(sumExpression, cplex.prod(distanceCF[c][f], fvc[f][v][c]));
+            sumExpression3 = cplex.sum(sumExpression3, cplex.prod(distanceCF[c][f], fvc[f][v][c]));
           }
         }
-        cplex.addLe(sumExpression, truckDistLimit);
+        cplex.addLe(sumExpression3, truckDistLimit);
       }
-
 
       //for consistency purposes
       for (int v = 0; v < this.numMaxVehiclePerFacility; v++) {
@@ -150,17 +148,16 @@ public class LPInstance
         }
       }
 
-
-
       IloNumExpr facilitiesCost = cplex.numExpr();
       IloNumExpr drivingCost = cplex.numExpr();
       IloNumExpr fixedVehicleCost = cplex.numExpr();
 
+      //facilities cost
       for (int f = 0; f < this.numFacilities; f++) {
         facilitiesCost = cplex.sum(facilitiesCost, cplex.prod(factoryOpen[f], openingCostF[f]));
       }
 
-
+      //driving cost
       for (int v = 0; v < this.numMaxVehiclePerFacility; v++) {
         for (int f = 0; f < this.numFacilities; f++) {
           for (int c = 0; c < this.numCustomers; c++) {
@@ -169,7 +166,7 @@ public class LPInstance
         }
       }
 
-
+      //fixed vehicle cost
       for (int v = 0; v < this.numMaxVehiclePerFacility; v++) {
         for (int f = 0; f < this.numFacilities; f++) {
           fixedVehicleCost = cplex.sum(fixedVehicleCost, factoryVehicles[f][v]);
@@ -177,35 +174,16 @@ public class LPInstance
       }
       fixedVehicleCost = cplex.prod(fixedVehicleCost, truckUsageCost);
 
-
-
+      //objective function
       cplex.addMinimize(cplex.sum(cplex.sum(facilitiesCost, drivingCost), fixedVehicleCost));
-
-
-
-
-
-      // // Diet Problem from Lecture Notes
-      // IloNumVar[] vars = cplex.numVarArray(2, 0, 1000, IloNumVarType.Float);
-
-      // IloNumExpr carbs = cplex.numExpr();
-      // carbs = cplex.sum(carbs, cplex.prod(100, vars[0]));
-      // carbs = cplex.sum(carbs, cplex.prod(250, vars[1]));
-
-      // cplex.addGe(carbs, 500);
-      // cplex.addGe(cplex.scalProd(new int[]{100, 50}, vars), 250);	// Fat
-      // cplex.addGe(cplex.scalProd(new int[]{150, 200}, vars), 600);	// Protein
-
-      // // Objective function
-      // cplex.addMinimize(cplex.scalProd(new int[]{25, 15}, vars));
 
       if(cplex.solve())
       {
-        objectiveValue = Math.ceil(cplex.getObjValue());
+        this.objectiveValue = Math.ceil(cplex.getObjValue());
 
         // System.out.println("Meat:  " + cplex.getValue(vars[0]));
         // System.out.println("Bread:  " + cplex.getValue(vars[1]));
-        System.out.println("Objective value: " + cplex.getObjValue());
+        // System.out.println("Objective value: " + cplex.getObjValue());
       }
       else
       {
