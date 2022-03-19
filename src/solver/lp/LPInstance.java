@@ -96,7 +96,7 @@ public class LPInstance
       for (int i = 0; i < this.numFacilities; i ++) {
         for (int j = 0; j < this.numMaxVehiclePerFacility; j ++) {
           for (int k = 0; k < this.numCustomers; k ++) {
-            fvc[i][j][k] = new new cplex.NumVar(0, 1, IloNumVarType.Float);
+            fvc[i][j][k] = new cplex.NumVar(0, 1, IloNumVarType.Float);
           }
           factoryVehicles[i][j] = new new cplex.NumVar(0, 1, IloNumVarType.Float);
         }
