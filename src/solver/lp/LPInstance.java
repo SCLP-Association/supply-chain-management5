@@ -89,18 +89,18 @@ public class LPInstance
       cplex = new IloCplex();
 
       // decision variables
-      IloNumVar[][][] fvc = new cplex.NumVar[this.numFacilities][this.numMaxVehiclePerFacility][this.numCustomers];
-      IloNumVar[] factoryOpen = new cplex.NumVar[this.numFacilities];
-      IloNumVar[][] factoryVehicles = new cplex.NumVar[this.numFacilities][this.numMaxVehiclePerFacility];
+      IloNumVar[][][] fvc = new IloNumVar[this.numFacilities][this.numMaxVehiclePerFacility][this.numCustomers];
+      IloNumVar[] factoryOpen = new IloNumVar[this.numFacilities];
+      IloNumVar[][] factoryVehicles = new IloNumVar[this.numFacilities][this.numMaxVehiclePerFacility];
 
       for (int i = 0; i < this.numFacilities; i ++) {
         for (int j = 0; j < this.numMaxVehiclePerFacility; j ++) {
           for (int k = 0; k < this.numCustomers; k ++) {
-            fvc[i][j][k] = new IloNumVar(0, 1, IloNumVarType.Float);
+            fvc[i][j][k] = new new cplex.NumVar(0, 1, IloNumVarType.Float);
           }
-          factoryVehicles[i][j] = new IloNumVar(0, 1, IloNumVarType.Float);
+          factoryVehicles[i][j] = new new cplex.NumVar(0, 1, IloNumVarType.Float);
         }
-        factoryOpen[i] = new IloNumVar(0, 1, IloNumVarType.Float);
+        factoryOpen[i] = new new cplex.NumVar(0, 1, IloNumVarType.Float);
       }
 
       // // Diet Problem from Lecture Notes
