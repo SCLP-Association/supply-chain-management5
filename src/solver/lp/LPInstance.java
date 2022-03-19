@@ -89,9 +89,9 @@ public class LPInstance
       cplex = new IloCplex();
 
       // decision variables
-      IloNumVar[][][] fvc = new IloNumVar[this.numFacilities][this.numMaxVehiclePerFacility][this.numCustomers];
-      IloNumVar[] factoryOpen = new IloNumVar[this.numFacilities];
-      IloNumVar[][] factoryVehicles = new IloNumVar[this.numFacilities][this.numMaxVehiclePerFacility];
+      IloNumVar[][][] fvc = new cplex.NumVar[this.numFacilities][this.numMaxVehiclePerFacility][this.numCustomers];
+      IloNumVar[] factoryOpen = new cplex.NumVar[this.numFacilities];
+      IloNumVar[][] factoryVehicles = new cplex.NumVar[this.numFacilities][this.numMaxVehiclePerFacility];
 
       for (int i = 0; i < this.numFacilities; i ++) {
         for (int j = 0; j < this.numMaxVehiclePerFacility; j ++) {
