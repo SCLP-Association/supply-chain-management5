@@ -98,9 +98,9 @@ public class LPInstance
           for (int k = 0; k < this.numCustomers; k ++) {
             fvc[i][j][k] = new cplex.NumVar(0, 1, IloNumVarType.Float);
           }
-          factoryVehicles[i][j] = new new cplex.NumVar(0, 1, IloNumVarType.Float);
+          factoryVehicles[i][j] = new cplex.NumVar(0, 1, IloNumVarType.Float);
         }
-        factoryOpen[i] = new new cplex.NumVar(0, 1, IloNumVarType.Float);
+        factoryOpen[i] = new cplex.NumVar(0, 1, IloNumVarType.Float);
       }
 
       // // Diet Problem from Lecture Notes
