@@ -103,10 +103,6 @@ public class LPInstance
         factoryOpen[i] = new IloNumVar(0, 1, IloNumVarType.Float);
       }
 
-
-    
-
-
       // // Diet Problem from Lecture Notes
       // IloNumVar[] vars = cplex.numVarArray(2, 0, 1000, IloNumVarType.Float);
 
@@ -121,18 +117,18 @@ public class LPInstance
       // // Objective function 
       // cplex.addMinimize(cplex.scalProd(new int[]{25, 15}, vars));
 
-      if(cplex.solve())
-      {
-        objectiveValue = Math.ceil(cplex.getObjValue());
+    //   if(cplex.solve())
+    //   {
+    //     // objectiveValue = Math.ceil(cplex.getObjValue());
 		
-        System.out.println("Meat:  " + cplex.getValue(vars[0]));
-        System.out.println("Bread:  " + cplex.getValue(vars[1]));
-        System.out.println("Objective value: " + cplex.getObjValue());
-      }
-      else
-      {
-        System.out.println("No Solution found!");
-      }
+    //     // System.out.println("Meat:  " + cplex.getValue(vars[0]));
+    //     // System.out.println("Bread:  " + cplex.getValue(vars[1]));
+    //     // System.out.println("Objective value: " + cplex.getObjValue());
+    //   }
+    //   else
+    //   {
+    //     System.out.println("No Solution found!");
+    //   }
     }
     catch(IloException e)
     {
